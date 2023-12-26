@@ -8,17 +8,21 @@
     "test": "mocha"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^8.10.0",
-    "@langchain/core": "^0.1.0",
-    "@xenova/transformers": "^2.9.0",
+    "@elastic/elasticsearch": "^8.11.0",
+    "@langchain/core": "^0.1.4",
+    "@xenova/transformers": "^2.12.1",
     "axios": "^1.6.2",
-    "hnswlib-node": "^2.0.0",
+    "hnswlib-node": "^2.1.0",
     "html-to-text": "^9.0.5",
-    "langchain": "^0.0.208"
+    "langchain": "^0.0.212"
   },
   "devDependencies": {
     "mocha": "^10.2.0",
-    "chai": "^4.3.10"
+    "chai": "^4.3.10",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "prettier": "^3.1.1"
   },
   "files": [
     "index.js"
