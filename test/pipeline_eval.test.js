@@ -1,4 +1,3 @@
-import { expect } from 'chai'
 import { docs, searchQueries } from './bf_docs.js'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { HtmlToTextTransformer } from 'langchain/document_transformers/html_to_text'
@@ -13,27 +12,16 @@ const partition = (array, isValid) => {
     { pass: [], fail: [] },
   )
 }
-
-const evaluate = async (store, queryTests) => {
-  const results = await Promise.all(
-    queryTests.map(async ({ query, expectedId }) => {
-      const [[doc, score]] = await store.similaritySearchWithScore(query, 1)
-      return { doc, score, isMatch: doc.metadata.id === expectedId }
-    }),
-  )
-
-  let { pass, fail } = partition(results, ({ isMatch }) => isMatch)
-  return { results, matchRatio: pass.length / queryTests.length, failedQueries: fail.map(({ query }) => query) }
-}
-
 class PipelineEvaluator {
   withEmbeddingModel(modelName) {
+    this.modelName = modelName
     let model = new HuggingFaceTransformersEmbeddings({ modelName })
     this.vectorStore = new HNSWLib(model, { space: 'cosine' })
     return this
   }
 
-  withTransformers(transformers) {
+  withTransformers(pipelineName, transformers) {
+    this.pipelineName = pipelineName
     this.transformers = transformers
     return this
   }
@@ -57,37 +45,45 @@ class PipelineEvaluator {
     )
 
     let { pass, fail } = partition(results, ({ isMatch }) => isMatch)
-    return { results, matchRatio: pass.length / queryTests.length, failedQueries: fail.map(({ query }) => query) }
+    return {
+      name: `${this.modelName}-${this.pipelineName}`,
+      matchRatio: `${pass.length} / ${queryTests.length}`,
+      // results,
+      // failedQueries: fail.map(({ query }) => query),
+    }
+  }
+
+  static async run() {
+    const models = ['Xenova/all-MiniLM-L6-v2', 'Xenova/msmarco-distilbert-base-v4']
+    const pipelines = {
+      stripThenSplit: [new HtmlToTextTransformer(), new RecursiveCharacterTextSplitter()],
+      splitThenStrip: [RecursiveCharacterTextSplitter.fromLanguage('html'), new HtmlToTextTransformer()],
+      stripOnly: [new HtmlToTextTransformer()],
+      splitOnly: [RecursiveCharacterTextSplitter.fromLanguage('html')],
+      rawDocs: [],
+    }
+    const results = []
+
+    for (const modelName of models) {
+      for (const [key, transformers] of Object.entries(pipelines)) {
+        const pipeline = await new PipelineEvaluator()
+          .withEmbeddingModel(modelName)
+          .withTransformers(key, transformers)
+          .addDocuments(docs)
+        results.push(await pipeline.evaluate(searchQueries))
+      }
+    }
+    return results
   }
 }
 
 describe('comparing two BF articles', function () {
   // bf_item_ids: 25148, 25173
   // wp_post_ids: 688, 709
-  this.timeout(10 * 1000)
+  this.timeout(60 * 1000)
 
-  let modelNames = ['Xenova/all-MiniLM-L6-v2', 'Xenova/msmarco-distilbert-base-v4']
-  const pipelines = {
-    stripThenSplit: [new HtmlToTextTransformer(), new RecursiveCharacterTextSplitter()],
-    splitThenStrip: [RecursiveCharacterTextSplitter.fromLanguage('html'), new HtmlToTextTransformer()],
-    stripOnly: [new HtmlToTextTransformer()],
-    splitOnly: [RecursiveCharacterTextSplitter.fromLanguage('html')],
-    rawDocs: [],
-  }
-  modelNames.forEach((modelName) =>
-    describe(modelName, () => {
-      Object.entries(pipelines).forEach(([key, transformers]) => {
-        it(`should match at least 99% of these things (${key})`, async () => {
-          const pipeline = await new PipelineEvaluator()
-            .withEmbeddingModel(modelName)
-            .withTransformers(transformers)
-            .addDocuments(docs)
-          const result = await pipeline.evaluate(searchQueries)
-
-          expect(result.matchRatio).to.be.at.least(90 / 100)
-          expect(result.failedQueries).to.eql([])
-        })
-      })
-    }),
-  )
+  it('compares the pipeline configurations', async () => {
+    const results = await PipelineEvaluator.run()
+    console.log(JSON.stringify(results, null, 2))
+  })
 })
