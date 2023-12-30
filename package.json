@@ -5,7 +5,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
-    "test": "mocha"
+    "test": "mocha",
+    "lint": "eslint --fix *.js test/*.js"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.11.0",
@@ -17,11 +18,14 @@
     "langchain": "^0.0.212"
   },
   "devDependencies": {
-    "mocha": "^10.2.0",
     "chai": "^4.3.10",
-    "eslint": "^8.56.0",
+    "eslint": "^8.0.1",
     "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0 || ^16.0.0 ",
     "eslint-plugin-prettier": "^5.1.2",
+    "eslint-plugin-promise": "^6.0.0",
+    "mocha": "^10.2.0",
     "prettier": "^3.1.1"
   },
   "files": [
