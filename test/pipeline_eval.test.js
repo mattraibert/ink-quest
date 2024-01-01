@@ -3,6 +3,7 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { HtmlToTextTransformer } from 'langchain/document_transformers/html_to_text'
 import { HNSWLib } from 'langchain/vectorstores/hnswlib'
 import { HuggingFaceTransformersEmbeddings } from 'langchain/embeddings/hf_transformers'
+import { describe, it } from 'mocha'
 
 const partition = (array, isValid) => {
   return array.reduce(
@@ -15,7 +16,7 @@ const partition = (array, isValid) => {
 class PipelineEvaluator {
   withEmbeddingModel(modelName) {
     this.modelName = modelName
-    let model = new HuggingFaceTransformersEmbeddings({ modelName })
+    const model = new HuggingFaceTransformersEmbeddings({ modelName })
     this.vectorStore = new HNSWLib(model, { space: 'cosine' })
     return this
   }
@@ -44,7 +45,7 @@ class PipelineEvaluator {
       }),
     )
 
-    let { pass, fail } = partition(results, ({ isMatch }) => isMatch)
+    const { pass } = partition(results, ({ isMatch }) => isMatch)
     return {
       name: `${this.modelName}-${this.pipelineName}`,
       matchRatio: `${pass.length} / ${queryTests.length}`,

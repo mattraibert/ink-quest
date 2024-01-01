@@ -1,7 +1,7 @@
 import { OpenAI } from 'langchain/llms/openai'
 import { VectorDBQAChain } from 'langchain/chains'
 
-async function runQAChain(vectorStore) {
+export async function runQAChain(vectorStore) {
   /* Use as part of a chain (currently no metadata filters) for LLM query */
   const model = new OpenAI()
   const chain = VectorDBQAChain.fromLLM(model, vectorStore, {

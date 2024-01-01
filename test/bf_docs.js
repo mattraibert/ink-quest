@@ -40,7 +40,7 @@ export const searchQueries = [
   { query: 'Cultural shifts in spy fiction from the 20th to 21st century', expectedId: 709 },
   { query: 'How personal experiences shape political narratives in novels', expectedId: 709 },
 ]
-export let docs = [
+export const docs = [
   {
     metadata: { id: 688 },
     pageContent:

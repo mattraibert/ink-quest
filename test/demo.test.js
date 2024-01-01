@@ -1,6 +1,7 @@
 import { expect } from 'chai'
+import { describe, it } from 'mocha'
 
-import { loadHNSWLibVectorStore, makeHNSWLibVectorStore } from '../make_hnswlib_vector_store.js'
+import { makeHNSWLibVectorStore } from '../make_hnswlib_vector_store.js'
 
 describe('makeHNSWLibVectorStore', () => {
   it('does semantic search with multiple documents', async () => {

@@ -1,6 +1,6 @@
 import { pipeline } from '@xenova/transformers'
 
-async function pipelineEx() {
+export async function pipelineEx() {
   // Create a feature-extraction pipeline
   const extractor = await pipeline('feature-extraction', 'Xenova/all-MiniLM-L6-v2')
 
