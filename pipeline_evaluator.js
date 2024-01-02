@@ -14,6 +14,24 @@ const partition = (array, isValid) => {
 }
 
 export class PipelineEvaluator {
+  _executionTimes = {}
+
+  constructor(props) {
+    this.addDocuments = this.measureExecutionTime(this.addDocuments)
+    this.evaluate = this.measureExecutionTime(this.evaluate)
+  }
+
+  measureExecutionTime(fn) {
+    return async (...args) => {
+      const start = performance.now()
+      const result = await fn.apply(this, args)
+      const end = performance.now()
+
+      this._executionTimes[fn.name] = { value: end - start, units: 'ms' }
+      return result
+    }
+  }
+
   withEmbeddingModel(modelName) {
     this.modelName = modelName
     const model = new HuggingFaceTransformersEmbeddings({ modelName })
@@ -34,24 +52,31 @@ export class PipelineEvaluator {
         docs,
       ),
     )
-    return this
+  }
+
+  formatResults() {
+    const tests = partition(this.results, ({ isMatch }) => isMatch)
+    const times = Object.entries(this._executionTimes)
+      .map(([name, { value, units }]) => {
+        if (units === 'ms') {
+          value = (value / 1000.0).toFixed(2)
+          units = 's'
+        }
+
+        return `${name}: ${value} ${units}`
+      })
+      .join(', ')
+
+    return `${this.modelName} ${this.pipelineName}: ${tests.pass.length} / ${this.results.length}; ${times}`
   }
 
   async evaluate(queryTests) {
-    const results = await Promise.all(
+    this.results = await Promise.all(
       queryTests.map(async ({ query, expectedId }) => {
         const [[doc, score]] = await this.vectorStore.similaritySearchWithScore(query, 1)
         return { query, expectedId, doc, score, isMatch: doc.metadata.id === expectedId }
       }),
     )
-
-    const { pass } = partition(results, ({ isMatch }) => isMatch)
-    return {
-      name: `${this.modelName}-${this.pipelineName}`,
-      matchRatio: `${pass.length} / ${queryTests.length}`,
-      // results,
-      // failedQueries: fail.map(({ query }) => query),
-    }
   }
 
   static async run() {
@@ -67,11 +92,10 @@ export class PipelineEvaluator {
 
     for (const modelName of models) {
       for (const [key, transformers] of Object.entries(pipelines)) {
-        const pipeline = await new PipelineEvaluator()
-          .withEmbeddingModel(modelName)
-          .withTransformers(key, transformers)
-          .addDocuments(docs)
-        results.push(await pipeline.evaluate(searchQueries))
+        const pipeline = new PipelineEvaluator().withEmbeddingModel(modelName).withTransformers(key, transformers)
+        await pipeline.addDocuments(docs)
+        await pipeline.evaluate(searchQueries)
+        results.push(pipeline.formatResults())
       }
     }
     return results
