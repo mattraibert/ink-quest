@@ -1,103 +1,78 @@
-import { HuggingFaceTransformersEmbeddings } from 'langchain/embeddings/hf_transformers'
-import { HNSWLib } from 'langchain/vectorstores/hnswlib'
 import { HtmlToTextTransformer } from 'langchain/document_transformers/html_to_text'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { docs, searchQueries } from './test/bf_docs.js'
-
-const partition = (array, isValid) => {
-  return array.reduce(
-    ({ pass, fail }, elem) => {
-      return isValid(elem) ? { pass: [...pass, elem], fail } : { pass, fail: [...fail, elem] }
-    },
-    { pass: [], fail: [] },
-  )
-}
+import { PipelineEvaluation } from './pipeline_evaluation.js'
 
 export class PipelineEvaluator {
-  _executionTimes = {}
+  models = []
+  pipelines = {}
 
-  constructor(props) {
-    this.addDocuments = this.measureExecutionTime(this.addDocuments)
-    this.evaluate = this.measureExecutionTime(this.evaluate)
-  }
-
-  measureExecutionTime(fn) {
-    return async (...args) => {
-      const start = performance.now()
-      const result = await fn.apply(this, args)
-      const end = performance.now()
-
-      this._executionTimes[fn.name] = { value: end - start, units: 'ms' }
-      return result
-    }
-  }
-
-  withEmbeddingModel(modelName) {
-    this.modelName = modelName
-    const model = new HuggingFaceTransformersEmbeddings({ modelName })
-    this.vectorStore = new HNSWLib(model, { space: 'cosine' })
-    return this
-  }
-
-  withTransformers(pipelineName, transformers) {
-    this.pipelineName = pipelineName
-    this.transformers = transformers
-    return this
-  }
-
-  async addDocuments(docs) {
-    await this.vectorStore.addDocuments(
-      await this.transformers.reduce(
-        async (docsPromise, transformer) => transformer.transformDocuments(await docsPromise),
-        docs,
-      ),
+  static setup() {
+    return (
+      new PipelineEvaluator()
+        .withModel('Xenova/all-MiniLM-L6-v2')
+        // .withModel('Xenova/msmarco-distilbert-base-v4')
+        // .withModel('WhereIsAI/UAE-Large-V1')
+        // .withModel('intfloat/e5-mistral-7b-instruct')
+        .withPipelines({
+          stripThenSplit100: [
+            new HtmlToTextTransformer(),
+            new RecursiveCharacterTextSplitter({ chunkSize: 100, chunkOverlap: 20, keepSeparator: false }),
+          ],
+          stripThenSplit1000: [
+            new HtmlToTextTransformer(),
+            new RecursiveCharacterTextSplitter({ chunkSize: 1000, chunkOverlap: 200, keepSeparator: false }),
+          ],
+          stripThenSplit2000: [
+            new HtmlToTextTransformer(),
+            new RecursiveCharacterTextSplitter({ chunkSize: 2000, chunkOverlap: 400, keepSeparator: false }),
+          ],
+          stripThenSplit5000: [
+            new HtmlToTextTransformer(),
+            new RecursiveCharacterTextSplitter({ chunkSize: 5000, chunkOverlap: 1000, keepSeparator: false }),
+          ],
+          stripThenSplit10000: [
+            new HtmlToTextTransformer(),
+            new RecursiveCharacterTextSplitter({ chunkSize: 10000, chunkOverlap: 2000, keepSeparator: false }),
+          ],
+          splitThenStrip: [RecursiveCharacterTextSplitter.fromLanguage('html'), new HtmlToTextTransformer()],
+          splitOnly: [RecursiveCharacterTextSplitter.fromLanguage('html')],
+          stripOnly: [new HtmlToTextTransformer()],
+          rawDocs: [],
+        })
     )
   }
 
-  formatResults() {
-    const tests = partition(this.results, ({ isMatch }) => isMatch)
-    const times = Object.entries(this._executionTimes)
-      .map(([name, { value, units }]) => {
-        if (units === 'ms') {
-          value = (value / 1000.0).toFixed(2)
-          units = 's'
-        }
-
-        return `${name}: ${value} ${units}`
+  async run() {
+    const evaluators = this.models.flatMap((modelName) => {
+      return Object.entries(this.pipelines).map(([pipelineName, transformers]) => {
+        return new PipelineEvaluation().withEmbeddingModel(modelName).withTransformers(pipelineName, transformers)
       })
-      .join(', ')
+    })
 
-    return `${this.modelName} ${this.pipelineName}: ${tests.pass.length} / ${this.results.length}; ${times}`
-  }
-
-  async evaluate(queryTests) {
-    this.results = await Promise.all(
-      queryTests.map(async ({ query, expectedId }) => {
-        const [[doc, score]] = await this.vectorStore.similaritySearchWithScore(query, 1)
-        return { query, expectedId, doc, score, isMatch: doc.metadata.id === expectedId }
-      }),
-    )
-  }
-
-  static async run() {
-    const models = ['Xenova/all-MiniLM-L6-v2', 'Xenova/msmarco-distilbert-base-v4']
-    const pipelines = {
-      stripThenSplit: [new HtmlToTextTransformer(), new RecursiveCharacterTextSplitter()],
-      splitThenStrip: [RecursiveCharacterTextSplitter.fromLanguage('html'), new HtmlToTextTransformer()],
-      stripOnly: [new HtmlToTextTransformer()],
-      splitOnly: [RecursiveCharacterTextSplitter.fromLanguage('html')],
-      rawDocs: [],
-    }
     const results = []
-
-    for (const modelName of models) {
-      for (const [key, transformers] of Object.entries(pipelines)) {
-        const pipeline = new PipelineEvaluator().withEmbeddingModel(modelName).withTransformers(key, transformers)
-        await pipeline.addDocuments(docs)
-        await pipeline.evaluate(searchQueries)
-        results.push(pipeline.formatResults())
-      }
+    // using a for loop so that only one evaluator runs at a time
+    for (const evaluator of evaluators) {
+      await evaluator.addDocuments(docs)
+      await evaluator.evaluate(searchQueries)
+      results.push(evaluator.formatResults())
     }
+
     return results
+  }
+
+  withModel(modelName) {
+    this.models.push(modelName)
+    return this
+  }
+
+  withPipeline(pipelineName, transformers) {
+    this.pipelines[pipelineName] = transformers
+    return this
+  }
+
+  withPipelines(pipelines) {
+    this.pipelines = { ...this.pipelines, ...pipelines }
+    return this
   }
 }
