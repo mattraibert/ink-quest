@@ -52,7 +52,6 @@ export class PipelineEvaluation {
   }
 
   formatResults() {
-    const tests = partition(this.results, ({ isMatch }) => isMatch)
     const times = Object.entries(this._executionTimes)
       .map(([name, { value, units }]) => {
         if (units === 'ms') {
@@ -64,6 +63,7 @@ export class PipelineEvaluation {
       })
       .join(', ')
 
+    const tests = partition(this.results, ({ isMatch }) => isMatch)
     return `${this.modelName} ${this.pipelineName}: ${tests.pass.length} / ${this.results.length}; ${times}`
   }
 
