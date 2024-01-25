@@ -1,11 +1,16 @@
-import { HtmlToTextTransformer } from 'langchain/document_transformers/html_to_text'
-import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { docs, searchQueries } from './test/bf_docs.js'
 import { PipelineEvaluation } from './pipeline_evaluation.js'
 
 export class PipelineEvaluator {
   models = []
   pipelines = {}
+  docs = docs
+
+  withDocs(docs) {
+    this.docs = docs
+    return this
+  }
+
   async run() {
     const evaluators = this.models.flatMap((modelName) => {
       return Object.entries(this.pipelines).map(([pipelineName, transformers]) => {
@@ -16,7 +21,7 @@ export class PipelineEvaluator {
     const results = []
     // using a for loop so that only one evaluator runs at a time
     for (const evaluator of evaluators) {
-      await evaluator.addDocuments(docs)
+      await evaluator.addDocuments(this.docs)
       await evaluator.evaluate(searchQueries)
       results.push(evaluator.formatResults())
     }
