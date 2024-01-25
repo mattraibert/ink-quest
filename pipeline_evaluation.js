@@ -67,6 +67,24 @@ export class PipelineEvaluation {
     return `${this.modelName} ${this.pipelineName}: ${tests.pass.length} / ${this.results.length}; ${times}`
   }
 
+  formatJSON() {
+    const tests = partition(this.results, ({ isMatch }) => isMatch)
+    return {
+      modelName: this.modelName,
+      pipelineName: this.pipelineName,
+      results: this.results,
+      // tests: {
+      //   pass: tests.pass,
+      //   fail: tests.fail,
+      // },
+      passCount: tests.pass.length,
+      failCount: tests.fail.length,
+      // executionTimes: this._executionTimes,
+      addDocumentsTime: this._executionTimes.addDocuments.value,
+      evaluateTime: this._executionTimes.evaluate.value,
+    }
+  }
+
   async evaluate(queryTests) {
     this.results = await Promise.all(
       queryTests.map(async ({ query, expectedId }) => {
