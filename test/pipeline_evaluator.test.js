@@ -9,38 +9,22 @@ describe('comparing two BF articles', function () {
   this.timeout(10 * 60 * 1000)
 
   it('compares the pipeline configurations', async () => {
-    let htmlSplitter = RecursiveCharacterTextSplitter.fromLanguage('html')
-    let htmlStripper = new HtmlToTextTransformer()
     const results = await new PipelineEvaluator()
       .withModel('Xenova/all-MiniLM-L6-v2')
       .withModel('Xenova/msmarco-distilbert-base-v4')
-      .withModel('WhereIsAI/UAE-Large-V1')
-      // .withModel('intfloat/e5-mistral-7b-instruct')
+      .withModel('Supabase/gte-small')
+      .withModel('Xenova/multi-qa-distilbert-cos-v1')
+      .withModel('Xenova/jina-embeddings-v2-small-en')
+      .withModel('Xenova/jina-embeddings-v2-base-en')
       .withPipelines({
-        stripThenSplit100: [
-          htmlStripper,
-          new RecursiveCharacterTextSplitter({ chunkSize: 100, chunkOverlap: 20, keepSeparator: false }),
-        ],
         stripThenSplit1000: [
-          htmlStripper,
+          new HtmlToTextTransformer(),
           new RecursiveCharacterTextSplitter({ chunkSize: 1000, chunkOverlap: 200, keepSeparator: false }),
         ],
-        stripThenSplit2000: [
-          htmlStripper,
-          new RecursiveCharacterTextSplitter({ chunkSize: 2000, chunkOverlap: 400, keepSeparator: false }),
-        ],
         stripThenSplit5000: [
-          htmlStripper,
+          new HtmlToTextTransformer(),
           new RecursiveCharacterTextSplitter({ chunkSize: 5000, chunkOverlap: 1000, keepSeparator: false }),
         ],
-        stripThenSplit10000: [
-          htmlStripper,
-          new RecursiveCharacterTextSplitter({ chunkSize: 10000, chunkOverlap: 2000, keepSeparator: false }),
-        ],
-        splitThenStrip: [htmlSplitter, htmlStripper],
-        splitOnly: [htmlSplitter],
-        stripOnly: [htmlStripper],
-        rawDocs: [],
       })
       .run()
     console.log(JSON.stringify(results, null, 2))
