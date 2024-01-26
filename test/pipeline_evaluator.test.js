@@ -2,7 +2,7 @@ import { describe, it } from 'mocha'
 import { PipelineEvaluator } from '../pipeline_evaluator.js'
 import { HtmlToTextTransformer } from 'langchain/document_transformers/html_to_text'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
-import { docs } from './bf_docs.js'
+import { docs, searchQueries } from './bf_docs.js'
 
 describe('comparing two BF articles', function () {
   // bf_item_ids: 25148, 25173
@@ -11,7 +11,7 @@ describe('comparing two BF articles', function () {
 
   it('compares the pipeline configurations', async () => {
     const results = await new PipelineEvaluator()
-      .withDocs(docs)
+      .withDocsAndQueries(docs, searchQueries)
       .withModel('Xenova/all-MiniLM-L6-v2')
       .withModel('Xenova/msmarco-distilbert-base-v4')
       .withModel('Supabase/gte-small')

@@ -1,13 +1,12 @@
-import { docs, searchQueries } from './test/bf_docs.js'
 import { PipelineEvaluation } from './pipeline_evaluation.js'
 
 export class PipelineEvaluator {
   models = []
   pipelines = {}
-  docs = docs
 
-  withDocs(docs) {
+  withDocsAndQueries(docs, queries) {
     this.docs = docs
+    this.queries = queries
     return this
   }
 
@@ -22,7 +21,7 @@ export class PipelineEvaluator {
     // using a for loop so that only one evaluator runs at a time
     for (const evaluator of evaluators) {
       await evaluator.addDocuments(this.docs)
-      await evaluator.evaluate(searchQueries)
+      await evaluator.evaluate(this.queries)
       results.push(evaluator.formatResults())
     }
 
