@@ -1,6 +1,6 @@
 import axiosClient from 'axios'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
-import { HtmlToTextTransformer } from 'langchain/document_transformers/html_to_text'
+import { HtmlToTextTransformer } from '@langchain/community/document_transformers/html_to_text'
 
 const toDocument = (article) => {
   return {

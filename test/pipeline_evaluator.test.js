@@ -1,6 +1,6 @@
 import { describe, it } from 'mocha'
 import { PipelineEvaluator } from '../pipeline_evaluator.js'
-import { HtmlToTextTransformer } from 'langchain/document_transformers/html_to_text'
+import { HtmlToTextTransformer } from '@langchain/community/document_transformers/html_to_text'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { docs, searchQueries } from './bf_docs.js'
 

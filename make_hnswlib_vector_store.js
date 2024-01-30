@@ -1,5 +1,5 @@
-import { HuggingFaceTransformersEmbeddings } from 'langchain/embeddings/hf_transformers'
-import { HNSWLib } from 'langchain/vectorstores/hnswlib'
+import { HuggingFaceTransformersEmbeddings } from '@langchain/community/embeddings/hf_transformers'
+import { HNSWLib } from '@langchain/community/vectorstores/hnswlib'
 
 export const makeHNSWLibVectorStore = (modelName = 'Xenova/msmarco-distilbert-base-v4') => {
   const embedModel = new HuggingFaceTransformersEmbeddings({ modelName })

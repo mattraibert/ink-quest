@@ -1,5 +1,5 @@
-import { HuggingFaceTransformersEmbeddings } from 'langchain/embeddings/hf_transformers'
-import { HNSWLib } from 'langchain/vectorstores/hnswlib'
+import { HuggingFaceTransformersEmbeddings } from '@langchain/community/embeddings/hf_transformers'
+import { HNSWLib } from '@langchain/community/vectorstores/hnswlib'
 
 const partition = (array, isValid) => {
   return array.reduce(

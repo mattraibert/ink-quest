@@ -1,6 +1,6 @@
 import { Client } from '@elastic/elasticsearch'
 import { ElasticVectorSearch } from 'langchain/vectorstores/elasticsearch'
-import { HuggingFaceTransformersEmbeddings } from 'langchain/embeddings/hf_transformers'
+import { HuggingFaceTransformersEmbeddings } from '@langchain/community/embeddings/hf_transformers'
 
 export function makeESVectorStore() {
   const config = {
