@@ -2,31 +2,52 @@ import axiosClient from 'axios'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { HtmlToTextTransformer } from '@langchain/community/document_transformers/html_to_text'
 
-const toDocument = (article) => {
-  return {
-    pageContent: article?.content?.rendered || '',
-    metadata: {
-      id: article.id,
-      title: article.title.rendered,
-      date: article.date,
-      author: article.author,
-    },
-  }
+const loggingGet = async (url, config, logResult = true) => {
+  let result = await axiosClient.get(url, config)
+  // console.log(`GET ${url}`)
+  // if (logResult) console.log(`GOT ${JSON.stringify(result.data, null, 2)}`)
+  return result
 }
 
 export class WordPressDocumentFetch {
-  constructor(wpClientConfig) {
+  constructor(wpClientConfig = {}) {
     this.wpClientConfig = wpClientConfig
   }
 
+  get basicAuth() {
+    const { wpApiKey, wpApiUser } = this.wpClientConfig
+    const authorization = Buffer.from(`${wpApiUser}:${wpApiKey}`).toString('base64')
+    return {
+      headers: {
+        Authorization: `Basic ${authorization}`,
+      },
+      withCredentials: false,
+    }
+  }
+
   async getArticles(page = 1, perPage = 100) {
-    const url = new URL(`${this.wpClientConfig.baseUrl + '/wp-json/wp/v2'}/articles`)
+    let baseUrl = this.wpClientConfig.baseUrl
+    const url = new URL(`${baseUrl}/wp-json/wp/v2/articles`)
     url.searchParams.append('per_page', perPage)
     url.searchParams.append('page', page)
-    console.log(`GET ${url}`)
+    url.searchParams.append('_embed', true)
     try {
-      const response = await axiosClient.get(url.href)
-      return response.data.map((article) => toDocument(article))
+      const response = await loggingGet(url.href, null, false)
+      return Promise.all(
+        response.data.map(async (wpArticle) => {
+          const authors = await loggingGet(`${baseUrl}/wp-json/coauthors/v1/authors/${wpArticle.id}`, this.basicAuth)
+          // console.log(`authors: ${JSON.stringify(authors, null, 2)}`)
+          return {
+            pageContent: wpArticle?.content?.rendered || '',
+            metadata: {
+              id: wpArticle.id,
+              title: wpArticle.title.rendered,
+              date: wpArticle.date,
+              author: authors.data[0]?.displayName,
+            },
+          }
+        }),
+      )
     } catch (e) {
       return []
     }
@@ -69,3 +90,5 @@ export class WordPressDocumentFetch {
     return stripHTML.transformDocuments(await splitter.transformDocuments(articles))
   }
 }
+
+export default WordPressDocumentFetch
