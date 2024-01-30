@@ -10,12 +10,13 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.11.0",
+    "@langchain/community": "^0.0.22",
     "@langchain/core": "^0.1.4",
     "@xenova/transformers": "^2.12.1",
     "axios": "^1.6.2",
     "hnswlib-node": "^2.1.0",
     "html-to-text": "^9.0.5",
-    "langchain": "^0.0.212"
+    "langchain": "^0.1.10"
   },
   "devDependencies": {
     "chai": "^4.3.10",
