@@ -27,6 +27,12 @@ describe('comparing two BF articles', function () {
           new HtmlToTextTransformer(),
           new RecursiveCharacterTextSplitter({ chunkSize: 5000, chunkOverlap: 1000, keepSeparator: false }),
         ],
+        splitThenStrip: [RecursiveCharacterTextSplitter.fromLanguage('html'), new HtmlToTextTransformer()],
+        splitThenStripThenSplit: [
+          RecursiveCharacterTextSplitter.fromLanguage('html'),
+          new HtmlToTextTransformer(),
+          new RecursiveCharacterTextSplitter({ chunkSize: 1000, chunkOverlap: 200, keepSeparator: false }),
+        ],
       })
       .run()
     console.log(JSON.stringify(results, null, 2))

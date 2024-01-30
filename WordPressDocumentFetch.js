@@ -36,7 +36,6 @@ export class WordPressDocumentFetch {
       return Promise.all(
         response.data.map(async (wpArticle) => {
           const authors = await loggingGet(`${baseUrl}/wp-json/coauthors/v1/authors/${wpArticle.id}`, this.basicAuth)
-          // console.log(`authors: ${JSON.stringify(authors, null, 2)}`)
           return {
             pageContent: wpArticle?.content?.rendered || '',
             metadata: {

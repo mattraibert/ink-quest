@@ -22,6 +22,7 @@ export class PipelineEvaluator {
     for (const evaluator of evaluators) {
       await evaluator.addDocuments(this.docs)
       await evaluator.evaluate(this.queries)
+      console.log(evaluator.formatResults())
       results.push(evaluator.formatResults())
     }
 
