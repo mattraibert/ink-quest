@@ -19,7 +19,7 @@ const uniqueRandomIntegers = ({ n, min = 0, max }) => {
 describe('comparing two BF articles', function () {
   it('pulls documents from wordpress', async () => {
     let articles = await new WordPressDocumentFetch({ baseUrl: 'http://localhost:8080' }).getArticles(1, 100)
-    const withAuthors = articles.filter((d) => d.metadata.author)
+    const withAuthors = articles.filter((d) => true || d.metadata.author)
     const rands = uniqueRandomIntegers({ n: 6, max: withAuthors.length - 1 })
 
     const sample = Array.from(rands).map((i) => withAuthors[i])

@@ -13,7 +13,7 @@ const partition = (array, isValid) => {
 export class PipelineEvaluation {
   _executionTimes = {}
 
-  constructor(props) {
+  constructor() {
     this.addDocuments = this.measureExecutionTime(this.addDocuments)
     this.evaluate = this.measureExecutionTime(this.evaluate)
   }
@@ -49,6 +49,10 @@ export class PipelineEvaluation {
     )
     console.log(`Adding ${documents.length} documents to ${this.modelName} ${this.pipelineName}`)
     await this.vectorStore.addDocuments(documents)
+  }
+
+  search(query, k = 1) {
+    return this.vectorStore.similaritySearch(query, k)
   }
 
   formatResults() {

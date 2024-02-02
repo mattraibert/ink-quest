@@ -33,22 +33,31 @@ export class WordPressDocumentFetch {
     url.searchParams.append('_embed', true)
     try {
       const response = await loggingGet(url.href, null, false)
-      return Promise.all(
-        response.data.map(async (wpArticle) => {
-          const authors = await loggingGet(`${baseUrl}/wp-json/coauthors/v1/authors/${wpArticle.id}`, this.basicAuth)
-          return {
-            pageContent: wpArticle?.content?.rendered || '',
-            metadata: {
-              id: wpArticle.id,
-              title: wpArticle.title.rendered,
-              date: wpArticle.date,
-              author: authors.data[0]?.displayName,
-            },
-          }
-        }),
-      )
+      return Promise.all(response.data.map((wpArticle) => this.prepareDocument(wpArticle)))
     } catch (e) {
       return []
+    }
+  }
+
+  async getArticle(articleId) {
+    let baseUrl = this.wpClientConfig.baseUrl
+    const url = new URL(`${baseUrl}/wp-json/wp/v2/articles/${articleId}`)
+    let articleJson = await loggingGet(url.href, this.basicAuth)
+    return this.prepareDocument(articleJson.data)
+  }
+
+  async prepareDocument(wpArticle) {
+    let baseUrl = this.wpClientConfig.baseUrl
+
+    // const authors = await loggingGet(`${baseUrl}/wp-json/coauthors/v1/authors/${wpArticle.id}`, this.basicAuth)
+    return {
+      pageContent: wpArticle?.content?.rendered || '',
+      metadata: {
+        id: wpArticle.id,
+        title: wpArticle.title.rendered,
+        date: wpArticle.date,
+        // author: authors.data[0]?.displayName,
+      },
     }
   }
 
