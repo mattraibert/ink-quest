@@ -55,11 +55,11 @@ describe('makeHNSWLibVectorStore', function () {
       .withModel('Xenova/jina-embeddings-v2-small-en')
       .withModel('Xenova/jina-embeddings-v2-base-en')
       .withPipelines({
-        stripThenSplit1000: [
+        stripThenSplit10: [
           new HtmlToTextTransformer(),
           new RecursiveCharacterTextSplitter({ chunkSize: 10, chunkOverlap: 2, keepSeparator: false }),
         ],
-        stripThenSplit5000: [
+        stripThenSplit100: [
           new HtmlToTextTransformer(),
           new RecursiveCharacterTextSplitter({ chunkSize: 100, chunkOverlap: 20, keepSeparator: false }),
         ],
