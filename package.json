@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@elastic/elasticsearch": "^8.11.0",
-    "@langchain/community": "^0.0.22",
+    "@langchain/community": "^0.0.27",
     "@langchain/core": "^0.1.4",
     "@xenova/transformers": "^2.12.1",
     "axios": "^1.6.2",
