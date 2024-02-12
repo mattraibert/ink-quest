@@ -16,7 +16,7 @@
     "axios": "^1.6.2",
     "hnswlib-node": "^2.1.0",
     "html-to-text": "^9.0.5",
-    "langchain": "^0.1.10"
+    "langchain": "^0.1.17"
   },
   "devDependencies": {
     "chai": "^5.0.3",
