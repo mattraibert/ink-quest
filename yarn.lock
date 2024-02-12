@@ -115,10 +115,10 @@
     uuid "^9.0.0"
     zod "^3.22.3"
 
-"@langchain/core@^0.1.4", "@langchain/core@~0.1.13", "@langchain/core@~0.1.16":
-  version "0.1.19"
-  resolved "https://registry.yarnpkg.com/@langchain/core/-/core-0.1.19.tgz#2b0e28f6720006c916d8b7698b94e40eaa63fb1f"
-  integrity sha512-2/b/0KpMAeIAeqEmRcR3Xv0kLvWNsU+R31mWmwhfK+2iV0BSyO4/+khG2wrFdHQltRhTL1E/ZrBa+FtLg7NgFA==
+"@langchain/core@^0.1.27", "@langchain/core@~0.1.13", "@langchain/core@~0.1.16":
+  version "0.1.27"
+  resolved "https://registry.yarnpkg.com/@langchain/core/-/core-0.1.27.tgz#a96e57180bf9ce8a118fa89573f3fb385e19f774"
+  integrity sha512-I43G9r2NIs1qTjfU07D6PUGhCfc3anwziqDeoZ4mk2wphVv+8HhAbQNbOSvsuIk2p3qVkjXgxnI9cBFoEdwd0Q==
   dependencies:
     ansi-styles "^5.0.0"
     camelcase "6"
