@@ -1,0 +1,70 @@
+version: '3.9'
+
+services:
+  elasticsearch:
+    image: elasticsearch:8.12.0
+    container_name: elasticsearch
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ingest.geoip.downloader.enabled=false
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+#  embedding-api:
+#    build: embedding-server
+#    ports:
+#      - "3030:3030"
+#    environment:
+#      - NAME=embedding-api
+#
+#  wordpress_db:
+#    image: mysql:8
+#    volumes:
+#      - wp_db_data:/var/lib/mysql
+#    ports:
+#      - "3306:3306"
+#    restart: always
+#    command: --general-log=1 --general-log-file=/var/log/mysql/general.log --sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+#    environment:
+#      MYSQL_ROOT_PASSWORD: rootpass
+#      MYSQL_DATABASE: wordpress
+#      MYSQL_USER: wpuser
+#      MYSQL_PASSWORD: wppass
+#
+#  wordpress:
+#    depends_on:
+#      - wordpress_db
+#    volumes:
+#      - ~/.ssh/${GITHUB_PRIVATE_KEY}:/root/.ssh/${GITHUB_PRIVATE_KEY}
+#      - wp_file_data:/var/www/html
+#      - ./bookforum-dependencies/wp-data/files/wp-content/uploads:/var/www/html/wp-content/uploads
+#    build:
+#      context: ./bookforum-dependencies
+#      args:
+#        COMPOSER_API_USERNAME: ${COMPOSER_API_USERNAME}
+#        COMPOSER_API_PASSWORD: ${COMPOSER_API_PASSWORD}
+#    ports:
+#      - "8080:80"
+#    restart: always
+#    environment:
+#      WORDPRESS_DB_HOST: wordpress_db
+#      WORDPRESS_DB_USER: wpuser
+#      WORDPRESS_DB_PASSWORD: wppass
+#      WORDPRESS_DB_NAME: wordpress
+#      ACF_PRO_KEY: ${ACF_PRO_KEY}
+
+
+volumes:
+  wp_db_data:
+  wp_file_data:
+  es_data:

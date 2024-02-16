@@ -3,9 +3,9 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { HtmlToTextTransformer } from '@langchain/community/document_transformers/html_to_text'
 
 const loggingGet = async (url, config, logResult = true) => {
+  console.log(`GET ${url}`)
   let result = await axiosClient.get(url, config)
-  // console.log(`GET ${url}`)
-  // if (logResult) console.log(`GOT ${JSON.stringify(result.data, null, 2)}`)
+  if (logResult) console.log(`GOT ${JSON.stringify(result.data, null, 2)}`)
   return result
 }
 
@@ -42,7 +42,7 @@ export class WordPressDocumentFetch {
   async getArticle(articleId) {
     let baseUrl = this.wpClientConfig.baseUrl
     const url = new URL(`${baseUrl}/wp-json/wp/v2/articles/${articleId}`)
-    let articleJson = await loggingGet(url.href, this.basicAuth)
+    let articleJson = await loggingGet(url.href) //, this.basicAuth)
     return this.prepareDocument(articleJson.data)
   }
 

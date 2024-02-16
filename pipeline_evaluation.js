@@ -10,6 +10,8 @@ const partition = (array, isValid) => {
   )
 }
 
+const hnswLibFactory = (model) => new HNSWLib(model, { space: 'cosine' })
+
 export class PipelineEvaluation {
   _executionTimes = {}
 
@@ -31,8 +33,12 @@ export class PipelineEvaluation {
 
   withEmbeddingModel(modelName) {
     this.modelName = modelName
-    const model = new HuggingFaceTransformersEmbeddings({ modelName })
-    this.vectorStore = new HNSWLib(model, { space: 'cosine' })
+    this.model = new HuggingFaceTransformersEmbeddings({ modelName })
+    return this
+  }
+
+  withVectorStore(makeVectorStore = hnswLibFactory) {
+    this.vectorStore = makeVectorStore(this.model)
     return this
   }
 
@@ -43,7 +49,7 @@ export class PipelineEvaluation {
   }
 
   async addDocuments(docs) {
-    let documents = await this.transformers.reduce(
+    const documents = await this.transformers.reduce(
       async (docsPromise, transformer) => transformer.transformDocuments(await docsPromise),
       docs,
     )
@@ -52,7 +58,7 @@ export class PipelineEvaluation {
   }
 
   search(query, k = 1) {
-    return this.vectorStore.similaritySearch(query, k)
+    return this.vectorStore.similaritySearchWithScore(query, k)
   }
 
   formatResults() {

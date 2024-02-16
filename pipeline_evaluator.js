@@ -13,7 +13,10 @@ export class PipelineEvaluator {
   async run() {
     const evaluators = this.models.flatMap((modelName) => {
       return Object.entries(this.pipelines).map(([pipelineName, transformers]) => {
-        return new PipelineEvaluation().withEmbeddingModel(modelName).withTransformers(pipelineName, transformers)
+        return new PipelineEvaluation()
+          .withEmbeddingModel(modelName)
+          .withTransformers(pipelineName, transformers)
+          .withVectorStore()
       })
     })
 

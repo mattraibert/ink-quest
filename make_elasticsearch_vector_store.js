@@ -1,8 +1,7 @@
 import { Client } from '@elastic/elasticsearch'
 import { ElasticVectorSearch } from 'langchain/vectorstores/elasticsearch'
-import { HuggingFaceTransformersEmbeddings } from '@langchain/community/embeddings/hf_transformers'
 
-export function makeESVectorStore() {
+export function makeESVectorStore(model) {
   const config = {
     node: process.env.ELASTIC_URL ?? 'http://127.0.0.1:9200',
   }
@@ -21,8 +20,5 @@ export function makeESVectorStore() {
     indexName: process.env.ELASTIC_INDEX ?? 'test_vectorstore',
   }
 
-  return new ElasticVectorSearch(
-    new HuggingFaceTransformersEmbeddings({ modelName: 'Xenova/msmarco-distilbert-base-v4' }),
-    clientArgs,
-  )
+  return new ElasticVectorSearch(model, clientArgs)
 }
