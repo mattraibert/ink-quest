@@ -24,7 +24,7 @@ const makePipeline = () => {
 }
 
 app.get('/embeddings/add/all', async (req, res) => {
-  const { page = 1, per_page = 100 } = req.query
+  const { page = 1, per_page = 10 } = req.query
   const articles = await new WordPressDocumentFetch({ baseUrl: 'http://localhost:8080' }).getArticles(page, per_page)
   pipeline = makePipeline()
   await pipeline.addDocuments(articles)
