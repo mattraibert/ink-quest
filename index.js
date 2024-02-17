@@ -28,11 +28,16 @@ app.get('/embeddings/add/all', async (req, res) => {
   const articles = await new WordPressDocumentFetch({ baseUrl: 'http://localhost:8080' }).getArticles(page, per_page)
   pipeline = makePipeline()
   await pipeline.addDocuments(articles)
-  res.send({ message: 'All articles embedded' })
+  const articleIds = articles.map((article) => article.metadata.id)
+  res.send({ message: 'All articles embedded', articleIds })
 })
 
 app.get('/embeddings/add/:articleId', async (req, res) => {
   const articleId = req.params.articleId
+  if (isNaN(articleId)) {
+    res.status(400).send({ message: 'Invalid article id', articleId })
+    return
+  }
   const article = await new WordPressDocumentFetch({ baseUrl: 'http://localhost:8080' }).getArticle(articleId)
   pipeline = makePipeline()
 
