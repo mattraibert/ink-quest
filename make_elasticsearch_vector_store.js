@@ -1,5 +1,5 @@
 import { Client } from '@elastic/elasticsearch'
-import { ElasticVectorSearch } from 'langchain/vectorstores/elasticsearch'
+import { ElasticVectorSearch } from '@langchain/community/vectorstores/elasticsearch'
 
 export function makeESVectorStore(model) {
   const config = {
