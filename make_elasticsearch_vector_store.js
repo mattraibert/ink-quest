@@ -15,9 +15,11 @@ export function makeESVectorStore(model) {
       password: process.env.ELASTIC_PASSWORD,
     }
   }
+  let modelName = model.modelName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()
+
   const clientArgs = {
     client: new Client(config),
-    indexName: process.env.ELASTIC_INDEX ?? 'test_vectorstore',
+    indexName: process.env.ELASTIC_INDEX ?? `test_vectorstore_${modelName}`,
   }
 
   return new ElasticVectorSearch(model, clientArgs)
