@@ -1,5 +1,6 @@
 import { HuggingFaceTransformersEmbeddings } from '@langchain/community/embeddings/hf_transformers'
 import { HNSWLib } from '@langchain/community/vectorstores/hnswlib'
+import { createDistinctChunkIds } from './createDistinctChunkIds.js'
 
 const partition = (array, isValid) => {
   return array.reduce(
@@ -49,12 +50,16 @@ export class PipelineEvaluation {
   }
 
   async addDocuments(docs) {
-    const documents = await this.transformers.reduce(
+    const transformedDocs = await this.transformers.reduce(
       async (docsPromise, transformer) => transformer.transformDocuments(await docsPromise),
       docs,
     )
-    console.log(`Adding ${documents.length} documents to ${this.modelName} ${this.pipelineName}`)
-    await this.vectorStore.addDocuments(documents)
+    console.log(`Adding ${transformedDocs.length} documents to ${this.modelName} ${this.pipelineName}`)
+    const ids = { ids: createDistinctChunkIds(transformedDocs.map((doc) => doc.metadata.id)) }
+
+    console.log(`Deleting ${JSON.stringify(ids, null, 2)}`)
+    await this.vectorStore.delete(ids)
+    return this.vectorStore.addDocuments(transformedDocs, ids)
   }
 
   search(query, k = 1) {

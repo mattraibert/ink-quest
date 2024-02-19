@@ -41,9 +41,9 @@ app.get('/embeddings/add/:articleId', async (req, res) => {
   const article = await new WordPressDocumentFetch({ baseUrl: 'http://localhost:8080' }).getArticle(articleId)
   pipeline = makePipeline()
 
-  await pipeline.addDocuments([article])
+  const embeddedIds = await pipeline.addDocuments([article])
 
-  res.status(201).send({ message: 'Article added and embedded', articleId })
+  res.status(201).send({ message: 'Article added and embedded', embeddedIds })
 })
 
 app.get('/search', async (req, res) => {

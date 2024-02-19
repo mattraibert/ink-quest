@@ -51,6 +51,7 @@ export class WordPressDocumentFetch {
 
     // const authors = await loggingGet(`${baseUrl}/wp-json/coauthors/v1/authors/${wpArticle.id}`, this.basicAuth)
     return {
+      id: wpArticle.id,
       pageContent: wpArticle?.content?.rendered || '',
       metadata: {
         id: wpArticle.id,
