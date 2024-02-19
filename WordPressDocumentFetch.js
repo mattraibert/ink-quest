@@ -2,7 +2,7 @@ import axiosClient from 'axios'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { HtmlToTextTransformer } from '@langchain/community/document_transformers/html_to_text'
 
-const loggingGet = async (url, config, logResult = true) => {
+const loggingGet = async (url, config = null, logResult = false) => {
   console.log(`GET ${url}`)
   let result = await axiosClient.get(url, config)
   if (logResult) console.log(`GOT ${JSON.stringify(result.data, null, 2)}`)
@@ -32,7 +32,7 @@ export class WordPressDocumentFetch {
     url.searchParams.append('page', page)
     url.searchParams.append('_embed', true)
     try {
-      const response = await loggingGet(url.href, null, false)
+      const response = await loggingGet(url.href)
       return Promise.all(response.data.map((wpArticle) => this.prepareDocument(wpArticle)))
     } catch (e) {
       return []
