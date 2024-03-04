@@ -11,7 +11,7 @@
   "dependencies": {
     "@elastic/elasticsearch": "^8.12.1",
     "@langchain/community": "^0.0.30",
-    "@langchain/core": "^0.1.30",
+    "@langchain/core": "^0.1.40",
     "@xenova/transformers": "^2.15.0",
     "axios": "^1.6.7",
     "body-parser": "^1.20.2",
