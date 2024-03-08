@@ -26,7 +26,8 @@ export default function Home() {
       <input type="text" placeholder="Search" />
       <button
         onClick={async () => {
-          const res = await fetch('http://localhost:3031/search?q=%22what%20is%20a%20propaganda%20book?%22&num=5')
+          const res = await fetch('/api/search?q=%22what%20is%20a%20propaganda%20book?%22&num=10')
+
           const data = await res.json()
 
           console.log(data)
