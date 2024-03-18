@@ -103,10 +103,10 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-2.0.2.tgz#d9fae00a2d5cb40f92cfe64b47ad749fbc38f917"
   integrity sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==
 
-"@langchain/community@^0.0.36", "@langchain/community@~0.0.29":
-  version "0.0.36"
-  resolved "https://registry.yarnpkg.com/@langchain/community/-/community-0.0.36.tgz#dd23f7bd5e1e5e8aa3e1a0656f812b4c6a032a39"
-  integrity sha512-4OOKH6F9orGZZHgbvYvekMV6JesL89JC3cmJxNvAr5x7vr7wNNa4fuLq+H7Ew8tnsQOYZk+K57UMYkcwVuwySA==
+"@langchain/community@^0.0.40", "@langchain/community@~0.0.29":
+  version "0.0.40"
+  resolved "https://registry.yarnpkg.com/@langchain/community/-/community-0.0.40.tgz#498a6c6772a3f5f62294a0445a236debb06ec9bb"
+  integrity sha512-a+uZ1+FyZ2tLBybAf1bPc+gm/8OgYLU+Z7h/r41ThRTHbMlnT7hiC8LFHX/zsm9H7mZ/dbpRSBuz/MFxS/TlBA==
   dependencies:
     "@langchain/core" "~0.1.44"
     "@langchain/openai" "~0.0.19"
