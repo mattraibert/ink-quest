@@ -103,13 +103,14 @@
   resolved "https://registry.yarnpkg.com/@humanwhocodes/object-schema/-/object-schema-2.0.2.tgz#d9fae00a2d5cb40f92cfe64b47ad749fbc38f917"
   integrity sha512-6EwiSjwWYP7pTckG6I5eyFANjPhmPjUX9JRLUSfNPC7FX7zK9gyZAfUEaECL6ALTpGX5AjnBq3C9XmVWPitNpw==
 
-"@langchain/community@^0.0.36", "@langchain/community@~0.0.29":
-  version "0.0.36"
-  resolved "https://registry.yarnpkg.com/@langchain/community/-/community-0.0.36.tgz#dd23f7bd5e1e5e8aa3e1a0656f812b4c6a032a39"
-  integrity sha512-4OOKH6F9orGZZHgbvYvekMV6JesL89JC3cmJxNvAr5x7vr7wNNa4fuLq+H7Ew8tnsQOYZk+K57UMYkcwVuwySA==
+"@langchain/community@^0.0.42", "@langchain/community@~0.0.29":
+  version "0.0.42"
+  resolved "https://registry.yarnpkg.com/@langchain/community/-/community-0.0.42.tgz#8c472b2d724ba0bb0a0e80e1b45865db1cb93b70"
+  integrity sha512-Xp3H0w23X9viHRpb3GUiFl+qjB68h/V7ztPOxR1AtaKlmXkjrSwiLqhMjlVsJ9jyPaKIr5ZOV07gYAXJUz/P8Q==
   dependencies:
     "@langchain/core" "~0.1.44"
     "@langchain/openai" "~0.0.19"
+    expr-eval "^2.0.2"
     flat "^5.0.2"
     langsmith "~0.1.1"
     uuid "^9.0.0"
