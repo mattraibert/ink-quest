@@ -22,10 +22,10 @@
     node-fetch "^2.6.7"
     web-streams-polyfill "^3.2.1"
 
-"@elastic/elasticsearch@^8.12.1":
-  version "8.12.1"
-  resolved "https://registry.yarnpkg.com/@elastic/elasticsearch/-/elasticsearch-8.12.1.tgz#fd80ef7a4cb959832ae01623a428055f65ffa0e4"
-  integrity sha512-/dJtxtvoN2vRXip6xUrEyzthhzVUOKL8L9YNq25HpMwqiqrJTK70/dOp6GM8oTVQ87UPyJBiiCxQY2+cvg2XWw==
+"@elastic/elasticsearch@^8.13.0":
+  version "8.13.0"
+  resolved "https://registry.yarnpkg.com/@elastic/elasticsearch/-/elasticsearch-8.13.0.tgz#625c6fba3caf944370c6859482fbd5cf3543aea8"
+  integrity sha512-OAYgzqArPqgDaIJ1yT0RX31YCgr1lleo53zL+36i23PFjHu08CA6Uq+BmBzEV05yEidl+ILPdeSfF3G8hPG/JQ==
   dependencies:
     "@elastic/transport" "^8.4.0"
     tslib "^2.4.0"
