@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   elasticsearch:
-    image: elasticsearch:8.12.1
+    image: elasticsearch:8.13.0
     container_name: elasticsearch
     environment:
       - node.name=es01
