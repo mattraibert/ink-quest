@@ -19,7 +19,7 @@ export function makeESVectorStore(model) {
 
   const clientArgs = {
     client: new Client(config),
-    indexName: process.env.ELASTIC_INDEX ?? `test_vectorstore_${modelName}`,
+    indexName: process.env.ELASTIC_INDEX ?? `library_vectorstore_${modelName}`,
   }
 
   return new ElasticVectorSearch(model, clientArgs)

@@ -62,11 +62,8 @@ export class PipelineEvaluation {
       docs,
     )
     console.log(`Adding ${transformedDocs.length} documents to ${this.modelName} ${this.pipelineName}`)
-    const ids = { ids: createDistinctChunkIds(transformedDocs.map((doc) => doc.metadata.id)) }
 
-    console.log(`Deleting ${JSON.stringify(ids, null, 2)}`)
-    await this.vectorStore.delete(ids)
-    return this.vectorStore.addDocuments(transformedDocs, ids)
+    return this.vectorStore.addDocuments(transformedDocs)
   }
 
   search(query, k = 1) {
