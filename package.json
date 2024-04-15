@@ -9,7 +9,7 @@
     "lint": "eslint --fix *.js test/*.js"
   },
   "dependencies": {
-    "@elastic/elasticsearch": "^8.13.0",
+    "@elastic/elasticsearch": "^8.13.1",
     "@langchain/community": "^0.0.44",
     "@langchain/core": "^0.1.54",
     "@xenova/transformers": "^2.16.1",
