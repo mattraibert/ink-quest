@@ -22,7 +22,7 @@ let docs = tags.map((tag, i) => new Document({ metadata: { id: i }, pageContent:
 await pipeline.addDocuments(docs)
 console.log('All tags embedded')
 
-const files = fs.readdirSync('./').filter((f) => f.match(/.*library.*\.csv$/))
+const files = fs.readdirSync('./libib').filter((f) => f.match(/.*library.*\.csv$/))
 if (!files.length) {
   console.error('No files found')
   process.exit(1)
@@ -30,7 +30,8 @@ if (!files.length) {
 
 const lib = fs.readFileSync(files[0], 'utf8')
 
-const books = [csvParse(lib)[0]]
+let parsedCsv = csvParse(lib)
+const books = [parsedCsv[0], parsedCsv[1]]
 
 const tagged_books = await Promise.all(
   books.map(async (book) => {
