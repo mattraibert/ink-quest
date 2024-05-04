@@ -18,29 +18,35 @@ const makePipeline = () => {
 }
 pipeline = makePipeline()
 
-let docs = tags.map((tag, i) => new Document({ metadata: { id: i }, pageContent: tag }))
+let docs = tags.map((tag, i) => {
+  const prompt = { description: 'A book about ' + tag }
+  return new Document({ metadata: { id: i, tag_text: tag }, pageContent: JSON.stringify(prompt) })
+})
 await pipeline.addDocuments(docs)
 console.log('All tags embedded')
 
-const files = fs.readdirSync('./libib').filter((f) => f.match(/.*library.*\.csv$/))
+const files = fs.readdirSync('./libib').filter((f) => f.match(/.*\.csv$/))
 if (!files.length) {
   console.error('No files found')
   process.exit(1)
 }
 
-const lib = fs.readFileSync(files[0], 'utf8')
+const lib = fs.readFileSync('./libib/' + files[0], 'utf8')
 
 let parsedCsv = csvParse(lib)
-const books = [parsedCsv[0], parsedCsv[1]]
+// take only the first five books
+const books = parsedCsv.slice(0, 5)
 
 const tagged_books = await Promise.all(
   books.map(async (book) => {
-    const { description, title } = book
-    const q = JSON.stringify({ title, description })
+    const query = { title: book.title, description: book.description }
 
-    console.log(`Searching for ${q}`)
-    let good_tags = (await pipeline.search(q, 5)).filter(([tag, score]) => score > 0.45) //.map(([tag, score]) => tag.pageContent)
-    return { ...book, tags: good_tags }
+    let good_tags = await pipeline.search(JSON.stringify(query), 10) //.filter(([tag, score]) => score > 0.45) //.map(([tag, score]) => tag.pageContent)
+    // return { ...book, tags: good_tags.map(([tag, score]) => "AI: " + tag.metadata.tag_text)}
+    return {
+      ...query,
+      tags: good_tags.map(([tag, score]) => `AI: ${tag.metadata.tag_text} (${Math.floor(score * 100)})`),
+    }
   }),
 )
 
