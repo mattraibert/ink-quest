@@ -1,4 +1,4 @@
-import { OpenAI } from 'langchain/llms/openai'
+import { OpenAI } from '@langchain/openai'
 import { VectorDBQAChain } from 'langchain/chains'
 
 export async function runQAChain(vectorStore) {

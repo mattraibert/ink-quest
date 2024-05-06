@@ -14,7 +14,7 @@ export class PipelineEvaluator {
     const evaluators = this.models.flatMap((modelName) => {
       return Object.entries(this.pipelines).map(([pipelineName, transformers]) => {
         return new PipelineEvaluation()
-          .withEmbeddingModel(modelName)
+          .withHFEmbeddingModel(modelName)
           .withTransformers(pipelineName, transformers)
           .withVectorStore()
       })

@@ -14,7 +14,7 @@ const makePipeline = () => {
   if (pipeline) return pipeline
   console.log('Creating new pipeline')
   pipeline = new PipelineEvaluation()
-    .withEmbeddingModel('Xenova/all-MiniLM-L6-v2')
+    .withHFEmbeddingModel('Xenova/all-MiniLM-L6-v2')
     .withTransformers('stripThenSplit1000', [
       new HtmlToTextTransformer(),
       new RecursiveCharacterTextSplitter({ chunkSize: 1000, chunkOverlap: 200, keepSeparator: false }),

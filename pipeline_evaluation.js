@@ -1,6 +1,7 @@
 import { HuggingFaceTransformersEmbeddings } from '@langchain/community/embeddings/hf_transformers'
 import { HNSWLib } from '@langchain/community/vectorstores/hnswlib'
 import { createDistinctChunkIds } from './createDistinctChunkIds.js'
+import { OpenAI } from '@langchain/openai'
 
 const partition = (array, isValid) => {
   return array.reduce(
@@ -32,7 +33,13 @@ export class PipelineEvaluation {
     }
   }
 
-  withEmbeddingModel(modelName) {
+  withOAIEmbeddingModel(modelName) {
+    this.modelName = modelName
+    this.model = new OpenAI({ modelName })
+    return this
+  }
+
+  withHFEmbeddingModel(modelName) {
     this.modelName = modelName
     this.model = new HuggingFaceTransformersEmbeddings({ modelName })
     return this
