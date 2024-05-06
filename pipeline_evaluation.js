@@ -1,7 +1,7 @@
 import { HuggingFaceTransformersEmbeddings } from '@langchain/community/embeddings/hf_transformers'
 import { HNSWLib } from '@langchain/community/vectorstores/hnswlib'
 import { createDistinctChunkIds } from './createDistinctChunkIds.js'
-import { OpenAI } from '@langchain/openai'
+import { OpenAI, OpenAIEmbeddings } from '@langchain/openai'
 
 const partition = (array, isValid) => {
   return array.reduce(
@@ -35,7 +35,11 @@ export class PipelineEvaluation {
 
   withOAIEmbeddingModel(modelName) {
     this.modelName = modelName
-    this.model = new OpenAI({ modelName })
+    // this.model = new OpenAI({ modelName })
+    this.model = new OpenAIEmbeddings({
+      // apiKey: 'YOUR-API-KEY', // In Node.js defaults to process.env.OPENAI_API_KEY
+      model: modelName,
+    })
     return this
   }
 

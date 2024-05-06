@@ -13,6 +13,7 @@
     "@langchain/community": "~0.0.56",
     "@langchain/core": "^0.1.54",
     "@langchain/openai": "~0.0.28",
+    "@next/env": "^14.2.3",
     "@xenova/transformers": "^2.16.1",
     "axios": "^1.6.8",
     "body-parser": "^1.20.2",
