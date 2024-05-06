@@ -13,12 +13,13 @@ nextEnv.loadEnvConfig(projectDir)
 class BookTagger {
   constructor() {
     this.pipeline = new PipelineEvaluation()
-      .withOAIEmbeddingModel('text-embedding-3-large')
-      // .withHFEmbeddingModel('Xenova/msmarco-distilbert-base-v4')
+      // .withOAIEmbeddingModel('text-embedding-3-large')
+      .withHFEmbeddingModel('Xenova/msmarco-distilbert-base-v4')
       // .withHFEmbeddingModel('mixedbread-ai/mxbai-embed-large-v1)
       // .withHFEmbeddingModel('Xenova/all-MiniLM-L6-v2')
       .withTransformers('no transformers', [])
-      .withVectorStore(makeESVectorStore)
+      // .withVectorStore(makeESVectorStore)
+      .withVectorStore()
   }
 
   listFiles() {
